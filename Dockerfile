@@ -13,6 +13,13 @@ RUN docker-php-ext-configure zip && \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY ./www/ /var/www/
-
 WORKDIR /var/www/
+RUN composer update
+RUN composer install
+RUN composer update --ignore-platform-reqs
+RUN npm install
+RUN npm run build 
+RUN php artisan key:generate
+RUN chmod -R 777 /var/www/storage 
